@@ -1,12 +1,13 @@
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import { OrderController } from './controllers/OrderController';
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import { OrderRouters } from "./routers/route";
 
 const app = Fastify({ logger: true });
 
 async function start() {
- 
   await app.register(cors, { origin: true });
+
+  await app.register(OrderRouters);
 
   try {
     await app.listen({ port: 3333 });
