@@ -2,21 +2,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
+ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Order {
   id           String   @id @default(uuid())
-  cliente     String
-  phone        String
-  description  String
-  totalValue   Float
-  // Estados: PENDENTE, EM_SEPARACAO, CONCLUIDO
-  status       String   @default("PENDENTE") 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
+  cliente     String    
+  produto        String
+  quantidade  Int
+  status    String @default("Recebido")
+  data      DateTime @default(now())
   @@map("orders")
 }
