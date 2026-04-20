@@ -6,8 +6,7 @@ const app = Fastify({ logger: true });
 
 async function start() {
   await app.register(cors, { origin: true });
-
-  await app.register(OrderRouters);
+  app.register(OrderRouters);
 
   try {
     await app.listen({ port: 3333 });

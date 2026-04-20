@@ -2,15 +2,14 @@ import { useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
 import type { Order, NovoPedidoForm } from "../types/order";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getOrders, createOrder, deleteOrder } from "../services/orders";
+import { getOrders, createOrder, updateOrder, deleteOrder } from "../services/orders";
 
 function StatusBadge({ status }: { status: Order["status"] }) {
-  const styles =
-    status === "Recebido"
-      ? "bg-blue-500 text-white"
-      : status === "Em separação"
-      ? "bg-orange-500 text-white"
-      : "bg-purple-500 text-white";
+  const styles = {
+    "Recebido": "bg-blue-500 text-white",
+    "Em separação": "bg-orange-500 text-white",
+    "Entregue": "bg-green-500 text-white"
+  }[status] || "bg-gray-500 text-white";
 
   return (
     <span className={`px-4 py-1 rounded-full text-sm font-semibold ${styles}`}>
@@ -23,7 +22,15 @@ export default function Pedidos() {
   const queryClient = useQueryClient();
 
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalEdicaoAberto, setModalEdicaoAberto] = useState(false);
+  const [pedidoEditando, setPedidoEditando] = useState<Order | null>(null);
   const [form, setForm] = useState<NovoPedidoForm>({
+    cliente: "",
+    produto: "",
+    quantidade: 0,
+    status: "Recebido",
+  });
+  const [formEdicao, setFormEdicao] = useState<NovoPedidoForm>({
     cliente: "",
     produto: "",
     quantidade: 0,
@@ -40,6 +47,15 @@ export default function Pedidos() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       setModalAberto(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      setModalEdicaoAberto(false);
+      setPedidoEditando(null);
     },
   });
 
@@ -60,8 +76,15 @@ export default function Pedidos() {
     setModalAberto(true);
   };
 
-  const fecharModal = () => {
-    setModalAberto(false);
+  const abrirModalEdicao = (pedido: Order) => {
+    setPedidoEditando(pedido);
+    setFormEdicao({
+      cliente: pedido.cliente,
+      produto: pedido.produto,
+      quantidade: pedido.quantidade,
+      status: pedido.status,
+    });
+    setModalEdicaoAberto(true);
   };
 
   const handleCriarPedido = () => {
@@ -69,18 +92,33 @@ export default function Pedidos() {
       alert("Preencha todos os campos.");
       return;
     }
-
     createMutation.mutate(form);
   };
 
+  const handleSalvarEdicao = () => {
+  if (!formEdicao.cliente.trim() || !formEdicao.produto.trim()) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+  if (!pedidoEditando) return;
+  
+  updateMutation.mutate({
+    id: pedidoEditando.id,
+    cliente: formEdicao.cliente,
+    produto: formEdicao.produto,
+    quantidade: formEdicao.quantidade,
+    status: formEdicao.status,
+    data: pedidoEditando.data, // ← Adicione esta linha
+  });
+};
+
   const handleEditar = (pedido: Order) => {
-    alert(`Editar pedido: ${pedido.id}`);
+    abrirModalEdicao(pedido);
   };
 
   const handleExcluir = (pedido: Order) => {
     const confirmar = confirm(`Deseja excluir o pedido ${pedido.id}?`);
     if (!confirmar) return;
-
     deleteMutation.mutate(pedido.id);
   };
 
@@ -115,7 +153,7 @@ export default function Pedidos() {
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Data</th>
                 <th className="px-6 py-4 text-center">Ações</th>
-              </tr>
+               </tr>
             </thead>
 
             <tbody>
@@ -127,25 +165,21 @@ export default function Pedidos() {
                   <td className="px-6 py-5 font-semibold text-gray-800">
                     {pedido.id}
                   </td>
-
                   <td className="px-6 py-5 text-gray-700">
                     {pedido.cliente}
                   </td>
-
                   <td className="px-6 py-5 text-gray-700">
                     {pedido.produto}
                   </td>
-
                   <td className="px-6 py-5 text-gray-700">
                     {pedido.quantidade}
                   </td>
-
                   <td className="px-6 py-5">
                     <StatusBadge status={pedido.status} />
                   </td>
-
-                  <td className="px-6 py-5 text-gray-700">{pedido.data}</td>
-
+                  <td className="px-6 py-5 text-gray-700">
+                    {new Date(pedido.data).toLocaleDateString('pt-BR')}
+                  </td>
                   <td className="px-6 py-5">
                     <div className="flex justify-center gap-4">
                       <button
@@ -190,7 +224,7 @@ export default function Pedidos() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="bg-white w-[520px] rounded-2xl shadow-xl p-10 relative">
             <button
-              onClick={fecharModal}
+              onClick={() => setModalAberto(false)}
               className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 transition"
             >
               <X size={22} />
@@ -262,13 +296,13 @@ export default function Pedidos() {
                 >
                   <option value="Recebido">Recebido</option>
                   <option value="Em separação">Em separação</option>
-                  <option value="Em transporte">Em transporte</option>
+                  <option value="Entregue">Entregue</option>
                 </select>
               </div>
 
               <div className="flex gap-4 mt-4">
                 <button
-                  onClick={fecharModal}
+                  onClick={() => setModalAberto(false)}
                   className="w-1/2 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
                 >
                   Cancelar
@@ -286,6 +320,119 @@ export default function Pedidos() {
               {createMutation.isError && (
                 <p className="text-red-500 text-sm mt-2">
                   Erro ao criar pedido.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {modalEdicaoAberto && pedidoEditando && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-white w-[520px] rounded-2xl shadow-xl p-10 relative">
+            <button
+              onClick={() => {
+                setModalEdicaoAberto(false);
+                setPedidoEditando(null);
+              }}
+              className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 transition"
+            >
+              <X size={22} />
+            </button>
+
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">
+              Editar Pedido
+            </h2>
+
+            <div className="flex flex-col gap-5">
+              <div>
+                <label className="text-sm text-gray-600 font-medium">
+                  Nome do Cliente
+                </label>
+                <input
+                  value={formEdicao.cliente}
+                  onChange={(e) =>
+                    setFormEdicao((prev) => ({ ...prev, cliente: e.target.value }))
+                  }
+                  type="text"
+                  className="mt-2 w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600 font-medium">
+                  Produto
+                </label>
+                <input
+                  value={formEdicao.produto}
+                  onChange={(e) =>
+                    setFormEdicao((prev) => ({ ...prev, produto: e.target.value }))
+                  }
+                  type="text"
+                  className="mt-2 w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600 font-medium">
+                  Quantidade
+                </label>
+                <input
+                  value={formEdicao.quantidade}
+                  onChange={(e) =>
+                    setFormEdicao((prev) => ({
+                      ...prev,
+                      quantidade: Number(e.target.value),
+                    }))
+                  }
+                  type="number"
+                  className="mt-2 w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600 font-medium">
+                  Status
+                </label>
+                <select
+                  value={formEdicao.status}
+                  onChange={(e) =>
+                    setFormEdicao((prev) => ({
+                      ...prev,
+                      status: e.target.value as Order["status"],
+                    }))
+                  }
+                  className="mt-2 w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                >
+                  <option value="Recebido">Recebido</option>
+                  <option value="Em separação">Em separação</option>
+                  <option value="Entregue">Entregue</option>
+                </select>
+              </div>
+
+              <div className="flex gap-4 mt-4">
+                <button
+                  onClick={() => {
+                    setModalEdicaoAberto(false);
+                    setPedidoEditando(null);
+                  }}
+                  className="w-1/2 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={handleSalvarEdicao}
+                  disabled={updateMutation.isPending}
+                  className="w-1/2 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
+                >
+                  {updateMutation.isPending ? "Salvando..." : "Salvar"}
+                </button>
+              </div>
+
+              {updateMutation.isError && (
+                <p className="text-red-500 text-sm mt-2">
+                  Erro ao atualizar pedido.
                 </p>
               )}
             </div>

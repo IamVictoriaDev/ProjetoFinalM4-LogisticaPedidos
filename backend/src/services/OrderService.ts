@@ -1,31 +1,28 @@
 import { prisma } from '../lib/prisma';
 
-// Definindo o que o pedido precisa ter
 export interface CreateOrderProps {
   cliente: string;
-  phone: string;
-  description: string;
-  totalValue: number;
+  produto: string;
+  quantidade: number;
 }
 
 export class OrderService {
-  async create({ cliente, phone, description, totalValue }: CreateOrderProps) {
-    if (!cliente || !phone) throw new Error("Dados obrigatórios não preenchidos.");
+  async create({ cliente, produto, quantidade }: CreateOrderProps) {
+    if (!cliente || !produto) throw new Error("Dados obrigatórios não preenchidos.");
 
     return await prisma.order.create({
       data: {
         cliente,
-        phone,
-        description,
-        totalValue: Number(totalValue),
-        status: "PENDENTE"
+        produto,
+        quantidade: Number(quantidade),
+        status: "Recebido"
       }
     });
   }
 
   async list() {
     return await prisma.order.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { data: 'desc' }
     });
   }
 
