@@ -96,21 +96,20 @@ export default function Pedidos() {
   };
 
   const handleSalvarEdicao = () => {
-  if (!formEdicao.cliente.trim() || !formEdicao.produto.trim()) {
-    alert("Preencha todos os campos.");
-    return;
-  }
-  if (!pedidoEditando) return;
-  
-  updateMutation.mutate({
-    id: pedidoEditando.id,
-    cliente: formEdicao.cliente,
-    produto: formEdicao.produto,
-    quantidade: formEdicao.quantidade,
-    status: formEdicao.status,
-    data: pedidoEditando.data, // ← Adicione esta linha
-  });
-};
+    if (!formEdicao.cliente.trim() || !formEdicao.produto.trim()) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+    if (!pedidoEditando) return;
+
+    updateMutation.mutate({
+      id: pedidoEditando.id,
+      cliente: formEdicao.cliente,
+      produto: formEdicao.produto,
+      quantidade: formEdicao.quantidade,
+      status: formEdicao.status,
+    });
+  };
 
   const handleEditar = (pedido: Order) => {
     abrirModalEdicao(pedido);

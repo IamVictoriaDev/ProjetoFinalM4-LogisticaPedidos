@@ -5,7 +5,10 @@ import { OrderRouters } from "./routers/route";
 const app = Fastify({ logger: true });
 
 async function start() {
-  await app.register(cors, { origin: true });
+  await app.register(cors, {
+    origin: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  });
   app.register(OrderRouters);
 
   try {

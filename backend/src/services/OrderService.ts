@@ -4,10 +4,18 @@ export interface CreateOrderProps {
   cliente: string;
   produto: string;
   quantidade: number;
+  status?: string;
+}
+
+export interface UpdateOrderProps {
+  cliente: string;
+  produto: string;
+  quantidade: number;
+  status: string;
 }
 
 export class OrderService {
-  async create({ cliente, produto, quantidade }: CreateOrderProps) {
+  async create({ cliente, produto, quantidade, status }: CreateOrderProps) {
     if (!cliente || !produto) throw new Error("Dados obrigatórios não preenchidos.");
 
     return await prisma.order.create({
@@ -15,7 +23,7 @@ export class OrderService {
         cliente,
         produto,
         quantidade: Number(quantidade),
-        status: "Recebido"
+        status: status ?? "Recebido"
       }
     });
   }
@@ -32,10 +40,19 @@ export class OrderService {
     return order;
   }
 
-  async updateStatus(id: string, status: string) {
+  async update(id: string, { cliente, produto, quantidade, status }: UpdateOrderProps) {
+    if (!cliente || !produto || !status) {
+      throw new Error("Dados obrigatórios não preenchidos.");
+    }
+
     return await prisma.order.update({
       where: { id },
-      data: { status }
+      data: {
+        cliente,
+        produto,
+        quantidade: Number(quantidade),
+        status,
+      }
     });
   }
 

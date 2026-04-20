@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { OrderService, CreateOrderProps } from '../services/OrderService';
+import { OrderService, CreateOrderProps, UpdateOrderProps } from '../services/OrderService';
 
 const orderService = new OrderService();
 
@@ -8,10 +8,6 @@ interface OrderParams {
   id: string;
 }
 
-
-interface UpdateStatusBody {
-  status: string;
-}
 
 export class OrderController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -46,12 +42,12 @@ export class OrderController {
 
   async update(request: FastifyRequest, reply: FastifyReply) {
     const { id } = request.params as OrderParams;
-    const { status } = request.body as UpdateStatusBody;
+    const body = request.body as UpdateOrderProps;
     try {
-      const order = await orderService.updateStatus(id, status);
-      return reply.send({ message: "Status atualizado!", order });
+      const order = await orderService.update(id, body);
+      return reply.send(order);
     } catch (error) {
-      return reply.status(400).send({ message: "Falha ao atualizar o status." });
+      return reply.status(400).send({ message: "Falha ao atualizar o pedido." });
     }
   }
 
@@ -60,7 +56,11 @@ export class OrderController {
     try {
       await orderService.delete(id);
       return reply.send({ message: "Pedido removido com sucesso!" });
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.code === "P2025") {
+        return reply.status(404).send({ message: "Pedido não encontrado para exclusão." });
+      }
+
       return reply.status(400).send({ message: "Erro ao tentar remover o pedido." });
     }
   }
