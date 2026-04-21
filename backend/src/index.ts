@@ -9,7 +9,7 @@ async function start() {
     origin: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   });
-  app.register(OrderRouters);
+  await app.register(OrderRouters);
 
   try {
     await app.listen({ port: 3333 });

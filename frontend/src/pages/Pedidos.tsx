@@ -8,7 +8,8 @@ function StatusBadge({ status }: { status: Order["status"] }) {
   const styles = {
     "Recebido": "bg-blue-500 text-white",
     "Em separação": "bg-orange-500 text-white",
-    "Entregue": "bg-green-500 text-white"
+    "Entregue": "bg-green-500 text-white",
+    "Em transporte": "bg-purple-500 text-white"
   }[status] || "bg-gray-500 text-white";
 
   return (
@@ -296,6 +297,7 @@ export default function Pedidos() {
                   <option value="Recebido">Recebido</option>
                   <option value="Em separação">Em separação</option>
                   <option value="Entregue">Entregue</option>
+                  <option value="Em transporte">Em transporte</option>
                 </select>
               </div>
 
@@ -406,6 +408,7 @@ export default function Pedidos() {
                   <option value="Recebido">Recebido</option>
                   <option value="Em separação">Em separação</option>
                   <option value="Entregue">Entregue</option>
+                  <option value="Em transporte">Em transporte</option>
                 </select>
               </div>
 
