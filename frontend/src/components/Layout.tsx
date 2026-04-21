@@ -12,17 +12,17 @@ export default function Layout() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
       {/* Sidebar com gradiente roxo */}
-      <aside className="w-64 bg-gradient-to-b from-indigo-600 via-purple-600 to-purple-700 flex flex-col shadow-2xl">
-
+      <aside className="w-64 bg-gradient-to-b from-brandPurple-700 via-brandFuchsia-500 to-brandPurple-600 flex flex-col shadow-2xl">
         {/* Logo  */}
         <div className="px-6 py-8">
-        
           <div className="flex justify-center mb-4">
-        
             <div className="text-center">
-              <h1 
-                className="text-3xl font-bold text-white tracking-wider" 
-                style={{ fontFamily: "'Poppins', 'Inter', sans-serif", letterSpacing: '0.1em' }}
+              <h1
+                className="text-3xl font-bold text-white tracking-wider"
+                style={{
+                  fontFamily: "'Poppins', 'Inter', sans-serif",
+                  letterSpacing: "0.1em",
+                }}
               >
                 LOGIX
               </h1>
@@ -30,7 +30,7 @@ export default function Layout() {
           </div>
 
           {/* Subtítulo */}
-          <p className="text-sm text-indigo-200 text-center uppercase tracking-wide mb-4">
+          <p className="text-sm text-brandPurple-100 text-center uppercase tracking-wide mb-4">
             Sistema de pedidos
           </p>
 
@@ -43,14 +43,13 @@ export default function Layout() {
 
         {/* Menu com mais espaço entre itens */}
         <nav className="flex-1 px-4 space-y-4">
-          
           <NavLink
             to="/"
             end
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
                 isActive
-                  ? "bg-white text-indigo-700 shadow-lg"
+                  ? "bg-white text-brandPurple-700 shadow-lg"
                   : "text-white hover:bg-white/10"
               }`
             }
@@ -64,7 +63,7 @@ export default function Layout() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
                 isActive
-                  ? "bg-white text-indigo-700 shadow-lg"
+                  ? "bg-white text-brandPurple-700 shadow-lg"
                   : "text-white hover:bg-white/10"
               }`
             }
@@ -78,7 +77,7 @@ export default function Layout() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
                 isActive
-                  ? "bg-white text-indigo-700 shadow-lg"
+                  ? "bg-white text-brandPurple-700 shadow-lg"
                   : "text-white hover:bg-white/10"
               }`
             }
@@ -92,7 +91,7 @@ export default function Layout() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
                 isActive
-                  ? "bg-white text-indigo-700 shadow-lg"
+                  ? "bg-white text-brandPurple-700 shadow-lg"
                   : "text-white hover:bg-white/10"
               }`
             }
@@ -100,13 +99,11 @@ export default function Layout() {
             <FileBarChart size={20} />
             <span>Relatórios</span>
           </NavLink>
-
         </nav>
       </aside>
 
       {/* Conteúdo */}
       <div className="flex-1 flex flex-col">
-
         {/* Header */}
         <header className="bg-white/80 backdrop-blur-sm border-b border-neutral-200 px-8 py-4 shadow-sm">
           <div className="flex items-center justify-between">
@@ -119,13 +116,13 @@ export default function Layout() {
                 <input
                   type="text"
                   placeholder="Buscar pedidos, clientes..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-neutral-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 border border-neutral-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brandPurple-500 focus:border-transparent shadow-sm transition-all"
                 />
               </div>
             </div>
 
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 bg-gradient-to-br from-brandFuchsia-600 to-brandPurple-500 rounded-full flex items-center justify-center shadow-lg">
                 <User size={20} className="text-white" />
               </div>
             </div>
@@ -136,7 +133,6 @@ export default function Layout() {
         <main className="flex-1 overflow-auto bg-gradient-to-br from-neutral-50 to-neutral-100">
           <Outlet />
         </main>
-
       </div>
     </div>
   );

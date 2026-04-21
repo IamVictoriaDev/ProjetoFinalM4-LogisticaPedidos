@@ -5,4 +5,7 @@ export type Order = {
   quantidade: number;
   status: string;
   data: string;
-}
+  prioridade?: "low" | "medium" | "high";
+  entregador?: string;
+  valor?: number;
+};
