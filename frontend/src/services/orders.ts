@@ -1,30 +1,29 @@
-import { api } from "./api";
-import type { Order } from "../types/order";
+import axios from "axios";
+import type { Order, NovoPedidoForm } from "../types/order";
 
-type CreateOrderDTO = Omit<Order, "id" | "data">;
-type UpdateOrderDTO = Omit<Order, "data">;
+const API = axios.create({ baseURL: "/api" });
 
 export async function getOrders(): Promise<Order[]> {
-  const response = await api.get("/orders");
-  return response.data;
+  const { data } = await API.get("/orders");
+  return data;
 }
 
-export async function createOrder(order: CreateOrderDTO): Promise<Order> {
-  const response = await api.post("/orders", order);
-  return response.data;
+export async function createOrder(order: NovoPedidoForm): Promise<Order> {
+  const { data } = await API.post("/orders", order);
+  return data;
 }
 
-export async function updateOrder(order: UpdateOrderDTO): Promise<Order> {
-  const response = await api.patch(`/orders/${order.id}`, {
-    cliente: order.cliente,
-    produto: order.produto,
-    quantidade: order.quantidade,
-    status: order.status,
-  });
-  return response.data;
+export async function updateOrder(id: string, order: NovoPedidoForm,): Promise<Order> {
+  const { data } = await API.put(`/orders/${id}`, order);
+  return data;
+}
+
+export async function patchOrderStatus(id: string, status: string) {
+  const { data } = await API.patch(`/orders/${id}`, { status });
+  return data;
 }
 
 export async function deleteOrder(id: string) {
-  const response = await api.delete(`/orders/${id}`);
-  return response.data;
+  const { data } = await API.delete(`/orders/${id}`);
+  return data;
 }

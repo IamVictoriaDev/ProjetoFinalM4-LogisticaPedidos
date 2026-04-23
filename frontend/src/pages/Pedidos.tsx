@@ -52,7 +52,8 @@ export default function Pedidos() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: updateOrder,
+    mutationFn: ({id, ...order }: {id: string } & NovoPedidoForm) => 
+      updateOrder(id, order),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       setModalEdicaoAberto(false);
