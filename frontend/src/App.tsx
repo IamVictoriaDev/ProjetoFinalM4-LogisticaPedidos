@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Pedidos from "./pages/Pedidos";
 import Kanban from "./pages/Kanban";
 import Relatorios from "./pages/Relatorios";
+import Toast from "./components/kanban/Toast";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="relatorios" element={<Relatorios />} />
           </Route>
         </Routes>
+        <Toast />
       </ErrorBoundary>
     </BrowserRouter>
   );

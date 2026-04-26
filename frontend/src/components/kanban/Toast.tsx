@@ -57,7 +57,8 @@ export default function Toast() {
             className="bg-white shadow-lg rounded-lg px-4 py-3 flex flex-col w-80 toast-enter"
             role="status"
             aria-atomic="true"
-            data-testid={`toast-${t.id}`}
+            data-testid="toast"
+            data-toast-id={t.id}
           >
             <div className="flex items-center justify-between">
               <div className="text-sm text-neutral-700">{t.message}</div>

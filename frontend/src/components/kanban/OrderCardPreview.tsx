@@ -2,19 +2,19 @@ import type { Order } from "../../types/order";
 import { Package, Calendar } from "lucide-react";
 
 const STATUS_STYLES: Record<string, { container: string; id: string }> = {
-  Recebido: {
+  recebido: {
     container: "bg-brandBlue-50 border-2 border-brandBlue-200",
     id: "bg-brandBlue-600 text-white ring-1 ring-white/40",
   },
-  "Em separação": {
+  separacao: {
     container: "bg-brandOrange-50 border-2 border-brandOrange-200",
     id: "bg-brandOrange-600 text-white ring-1 ring-white/40",
   },
-  "Em transporte": {
+  transporte: {
     container: "bg-brandPurple-50 border-2 border-brandPurple-200",
     id: "bg-brandPurple-500 text-white ring-1 ring-white/40",
   },
-  Entregue: {
+  entregue: {
     container: "bg-brandGreen-50 border-2 border-brandGreen-200",
     id: "bg-brandGreen-600 text-white ring-1 ring-white/40",
   },
@@ -25,7 +25,7 @@ type Props = {
 };
 
 export default function OrderCardPreview({ order }: Props) {
-  const variant = STATUS_STYLES[order.status] ?? STATUS_STYLES.Recebido;
+  const variant = STATUS_STYLES[order.status] ?? STATUS_STYLES.recebido;
 
   return (
     <div

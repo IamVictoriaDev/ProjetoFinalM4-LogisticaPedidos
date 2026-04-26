@@ -1,16 +1,14 @@
-import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Order } from "../types/order";
-
-const API = axios.create({ baseURL: "/api" });
+import { api } from "./api";
 
 export async function fetchOrders(): Promise<Order[]> {
-  const { data } = await API.get("/orders");
+  const { data } = await api.get("/orders");
   return data;
 }
 
-export async function patchOrderStatus(id: string, status: string) {
-  const { data } = await API.patch(`/orders/${id}`, { status });
+export async function patchOrderStatus(id: string, status: Order["status"]) {
+  const { data } = await api.patch(`/orders/${id}`, { status });
   return data;
 }
 
@@ -27,7 +25,7 @@ export function useUpdateOrderStatus() {
   return useMutation<
     Order,
     Error,
-    { id: string; status: string },
+    { id: string; status: Order["status"] },
     { previous?: Order[] }
   >({
     mutationFn: ({ id, status }) => patchOrderStatus(id, status),

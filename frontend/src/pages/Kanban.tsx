@@ -11,10 +11,11 @@ import KanbanColumn from "../components/kanban/KanbanColumn";
 import OrderCard from "../components/kanban/OrderCard";
 import OrderCardPreview from "../components/kanban/OrderCardPreview";
 import { useOrders, useUpdateOrderStatus } from "../services/orders";
-import type { Order } from "../types/order";
+import { useToast } from "../store/useToast";
+import type { Order, OrderStatus } from "../types/order";
 
 type ColumnType = {
-  id: string;
+  id: OrderStatus;
   title: string;
 };
 
@@ -28,6 +29,7 @@ const columns: ColumnType[] = [
 export default function Kanban() {
   const { data: orders = [], isLoading } = useOrders();
   const updateStatus = useUpdateOrderStatus();
+  const { push } = useToast();
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const sensors = useSensors(
@@ -44,8 +46,30 @@ export default function Kanban() {
     setActiveId(null);
     if (!over) return;
 
-    // otimista: atualizar via mutation
-    updateStatus.mutate({ id: String(active.id), status: String(over.id) });
+    const previousStatus = active.data?.current?.status as OrderStatus | undefined;
+    const targetStatus = (over.data?.current?.columnId ??
+      over.id) as OrderStatus;
+
+    if (!previousStatus || previousStatus === targetStatus) return;
+
+    const orderId = String(active.id);
+
+    updateStatus.mutate(
+      { id: orderId, status: targetStatus },
+      {
+        onSuccess: () => {
+          push({
+            message: `Pedido PED-${orderId} movido para ${
+              columns.find((c) => c.id === targetStatus)?.title ?? "nova coluna"
+            }`,
+            actionLabel: "Desfazer",
+            onAction: () => {
+              updateStatus.mutate({ id: orderId, status: previousStatus });
+            },
+          });
+        },
+      },
+    );
   }
 
   function handleDragCancel() {
@@ -82,6 +106,10 @@ export default function Kanban() {
                       key={order.id}
                       id={order.id}
                       cliente={order.cliente}
+                      produto={order.produto}
+                      quantidade={order.quantidade}
+                      data={order.data}
+                      status={order.status}
                     />
                   ))}
                 </KanbanColumn>
