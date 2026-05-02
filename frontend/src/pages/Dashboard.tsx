@@ -16,13 +16,11 @@ export default function Dashboard() {
 
   const hoje = new Date().toISOString().split("T")[0];
 
-  // ─── KPIs reais ─────────────────────────────────────────────────────────────
   const pedidosHoje   = useMemo(() => orders.filter((p) => p.data === hoje).length, [orders, hoje]);
   const aguardando    = useMemo(() => orders.filter((p) => p.status === "Recebido").length, [orders]);
   const emTransporte  = useMemo(() => orders.filter((p) => p.status === "Em transporte").length, [orders]);
   const entreguesHoje = useMemo(() => orders.filter((p) => p.status === "Entregue" && p.data === hoje).length, [orders, hoje]);
 
-  // ─── Gráfico real — pedidos agrupados por data ───────────────────────────────
   const evolucaoPedidos = useMemo(() => {
     const map: Record<string, number> = {};
     orders.forEach((o) => {
@@ -38,14 +36,12 @@ export default function Dashboard() {
       }));
   }, [orders]);
 
-  // ─── Últimos pedidos criados (substitui atividade recente) ───────────────────
   const ultimosPedidos = useMemo(() => {
     return [...orders]
       .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
       .slice(0, 5);
   }, [orders]);
 
-  // ─── Ações pendentes — pedidos com status Recebido (aguardando separação) ───
   const acoesPendentes = useMemo(() => {
     return orders
       .filter((p) => p.status === "Recebido" || p.status === "Em separação")
@@ -61,55 +57,54 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="p-8 flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="p-4 md:p-8 flex items-center justify-center min-h-screen bg-gray-50">
         <p className="text-gray-400 text-sm">Carregando dashboard...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8 bg-gradient-to-br from-slate-50 to-indigo-50/30 min-h-screen">
+    <div className="p-4 md:p-8 bg-gradient-to-br from-slate-50 to-indigo-50/30 min-h-screen">
 
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Dashboard</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900">Dashboard</h2>
         <p className="text-slate-500 mt-1 text-sm">Visão operacional de hoje</p>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards — 2x2 no mobile, 4x1 no desktop */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         {[
-          { label: "Pedidos Hoje",         value: pedidosHoje,   sub: "Criados nas últimas 24h", color: "text-indigo-600", bgColor: "bg-indigo-50", icon: Package },
-          { label: "Aguardando Separação", value: aguardando,    sub: "Status: Recebido",         color: "text-amber-500", bgColor: "bg-amber-50",  icon: Clock },
-          { label: "Em Transporte",        value: emTransporte,  sub: "A caminho do destino",     color: "text-purple-600", bgColor: "bg-purple-50", icon: Truck },
-          { label: "Entregues Hoje",       value: entreguesHoje, sub: "Finalizados hoje",          color: "text-green-600", bgColor: "bg-green-50",  icon: CheckCircle },
+          { label: "Pedidos Hoje",         value: pedidosHoje,   sub: "Últimas 24h",       color: "text-indigo-600", bgColor: "bg-indigo-50", icon: Package },
+          { label: "Aguardando Separação", value: aguardando,    sub: "Status: Recebido",   color: "text-amber-500", bgColor: "bg-amber-50",  icon: Clock },
+          { label: "Em Transporte",        value: emTransporte,  sub: "A caminho",           color: "text-purple-600", bgColor: "bg-purple-50", icon: Truck },
+          { label: "Entregues Hoje",       value: entreguesHoje, sub: "Finalizados hoje",    color: "text-green-600", bgColor: "bg-green-50",  icon: CheckCircle },
         ].map(({ label, value, sub, color, bgColor, icon: Icon }) => (
-          <div key={label} className="bg-white border border-indigo-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-slate-400 uppercase tracking-wider font-medium">{label}</p>
-              <div className={`w-9 h-9 rounded-lg ${bgColor} flex items-center justify-center`}>
-                <Icon className={color} size={18} />
+          <div key={label} className="bg-white border border-indigo-100 rounded-xl p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-2 md:mb-3">
+              <p className="text-xs text-slate-400 font-medium leading-tight">{label}</p>
+              <div className={`w-8 h-8 md:w-9 md:h-9 rounded-lg ${bgColor} flex items-center justify-center flex-shrink-0`}>
+                <Icon className={color} size={16} aria-hidden="true" />
               </div>
             </div>
-            <p className={`text-4xl font-bold leading-none mb-1 ${color}`}>{value}</p>
+            <p className={`text-3xl md:text-4xl font-bold leading-none mb-1 ${color}`}>{value}</p>
             <p className="text-xs text-slate-400">{sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Gráfico + Últimos pedidos */}
+      {/* Gráfico + Últimos pedidos — empilhados no mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
-        {/* Gráfico real */}
-        <div className="bg-white border border-indigo-100 rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-indigo-100 rounded-xl p-4 md:p-5 shadow-sm">
           <div className="flex items-center justify-between mb-1">
             <p className="text-sm font-semibold text-slate-900">Pedidos — últimos 7 dias</p>
             <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full flex items-center gap-1">
-              <TrendingUp size={12} />
+              <TrendingUp size={12} aria-hidden="true" />
               {orders.length} total
             </span>
           </div>
-          <p className="text-xs text-slate-400 mb-4">Evolução diária por data de criação</p>
+          <p className="text-xs text-slate-400 mb-4">Evolução diária</p>
           {evolucaoPedidos.length === 0 ? (
             <div className="h-36 flex items-center justify-center text-sm text-slate-400">
               Nenhum dado disponível
@@ -120,20 +115,16 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="dia" stroke="#cbd5e1" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis stroke="#cbd5e1" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "#fff", border: "1px solid #e0e7ff", borderRadius: "8px", fontSize: 12 }}
-                  cursor={{ stroke: "#e0e7ff" }}
-                />
+                <Tooltip contentStyle={{ backgroundColor: "#fff", border: "1px solid #e0e7ff", borderRadius: "8px", fontSize: 12 }} cursor={{ stroke: "#e0e7ff" }} />
                 <Line type="monotone" dataKey="pedidos" stroke="#6366f1" strokeWidth={2.5} dot={{ r: 3, fill: "#6366f1" }} activeDot={{ r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
           )}
         </div>
 
-        {/* Últimos pedidos reais */}
-        <div className="bg-white border border-indigo-100 rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-indigo-100 rounded-xl p-4 md:p-5 shadow-sm">
           <p className="text-sm font-semibold text-slate-900 mb-1">Últimos Pedidos</p>
-          <p className="text-xs text-slate-400 mb-4">Pedidos mais recentes no sistema</p>
+          <p className="text-xs text-slate-400 mb-4">Pedidos mais recentes</p>
           <div className="flex flex-col gap-2">
             {ultimosPedidos.length === 0 ? (
               <p className="text-sm text-slate-400 text-center py-4">Nenhum pedido encontrado</p>
@@ -142,11 +133,11 @@ export default function Dashboard() {
               return (
                 <div key={pedido.id} className={`flex items-center gap-3 px-3 py-2 rounded-lg ${sc.bg}`}>
                   <div className={`w-2 h-2 rounded-full flex-shrink-0 ${sc.dot}`} />
-                  <p className="text-xs flex-1 text-slate-700">
+                  <p className="text-xs flex-1 text-slate-700 truncate">
                     <span className={`font-semibold ${sc.text}`}>{pedido.id}</span>
                     {" — "}{pedido.cliente}
                   </p>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sc.bg} ${sc.text}`}>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${sc.bg} ${sc.text}`}>
                     {pedido.status}
                   </span>
                 </div>
@@ -156,14 +147,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Ações pendentes reais */}
-      <div className="bg-white border border-indigo-100 rounded-xl p-5 shadow-sm">
+      {/* Ações pendentes */}
+      <div className="bg-white border border-indigo-100 rounded-xl p-4 md:p-5 shadow-sm">
         <p className="text-sm font-semibold text-slate-900 mb-1">Ações Pendentes</p>
-        <p className="text-xs text-slate-400 mb-4">Pedidos aguardando separação ou em processamento</p>
+        <p className="text-xs text-slate-400 mb-4">Pedidos aguardando atenção</p>
         <div className="flex flex-col gap-2">
           {acoesPendentes.length === 0 ? (
             <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-3 rounded-xl">
-              <CheckCircle size={14} />
+              <CheckCircle size={14} aria-hidden="true" />
               <span className="text-sm font-medium">Nenhuma ação pendente!</span>
             </div>
           ) : acoesPendentes.map((pedido) => {
@@ -175,12 +166,12 @@ export default function Dashboard() {
                   urgente ? "bg-amber-50 border-amber-400" : "bg-slate-50 border-slate-300"
                 }`}
               >
-                {urgente && <AlertCircle size={14} className="text-amber-500 flex-shrink-0" />}
-                <p className="text-sm text-slate-700 flex-1">
+                {urgente && <AlertCircle size={14} className="text-amber-500 flex-shrink-0" aria-hidden="true" />}
+                <p className="text-sm text-slate-700 flex-1 truncate">
                   <span className="font-semibold">{pedido.id}</span>
                   {" — "}{pedido.produto} · {pedido.cliente}
                 </p>
-                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0 ${
                   urgente ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-500"
                 }`}>
                   {pedido.status}

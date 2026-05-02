@@ -167,32 +167,32 @@ export default function Relatorios() {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-gray-50">
+    <div className="p-4 md:p-8 min-h-screen bg-gray-50">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Relatórios</h2>
-          <p className="text-gray-500 mt-1">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">Relatórios</h2>
+          <p className="text-gray-500 mt-1 text-sm">
             {uploadedData ? `Exibindo dados de: ${fileName}` : "Análise operacional em tempo real"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           {totalPedidos > 0 && (
-            <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-sm font-semibold transition shadow-sm">
-              <Download size={15} />
+            <button onClick={handleExportCSV} className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-xs font-semibold transition shadow-sm">
+              <Download size={14} aria-hidden="true" />
               Exportar CSV
             </button>
           )}
           {uploadedData && (
-            <button onClick={handleReset} className="text-sm text-gray-400 hover:text-red-500 transition underline">
+            <button onClick={handleReset} className="text-xs text-gray-400 hover:text-red-500 transition underline">
               Limpar upload
             </button>
           )}
-          <label className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold cursor-pointer transition shadow-sm">
-            <Upload size={15} />
+          <label className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold cursor-pointer transition shadow-sm">
+            <Upload size={14} aria-hidden="true" />
             {uploadedData ? "Novo arquivo" : "Importar dados"}
-            <input type="file" accept=".json,.csv" onChange={handleFileUpload} className="hidden" />
+            <input type="file" accept=".json,.csv" onChange={handleFileUpload} className="hidden" aria-label="Importar arquivo de dados" />
           </label>
         </div>
       </div>
@@ -201,7 +201,7 @@ export default function Relatorios() {
       {processing && (
         <div className="bg-white border border-indigo-100 rounded-2xl p-5 mb-6 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <FileText className="text-indigo-600" size={18} />
+            <FileText className="text-indigo-600" size={18} aria-hidden="true" />
             <p className="text-sm font-medium text-gray-700">Processando {fileName}...</p>
           </div>
           <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
@@ -210,88 +210,74 @@ export default function Relatorios() {
         </div>
       )}
 
-      {/* Badge */}
+      {/* Badge sucesso */}
       {uploadedData && !processing && (
         <div className="flex items-center gap-2 text-green-700 bg-green-50 px-4 py-3 rounded-xl border border-green-200 w-fit mb-4">
-          <CheckCircle size={16} />
+          <CheckCircle size={16} aria-hidden="true" />
           <span className="text-sm font-medium">Arquivo processado com sucesso</span>
         </div>
       )}
 
-      {/* Dashboard */}
       <div className="space-y-4">
 
-        {/* Métricas */}
+        {/* Métricas — 2x2 no mobile */}
         <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-          <div className="grid grid-cols-4 divide-x divide-gray-100">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-gray-100">
             {[
-              { icon: <Package size={20} />, val: totalPedidos, lbl: "Pedidos", bg: "#ede9fe", color: "#4f46e5" },
-              { icon: <Truck size={20} />, val: totalVolume.toLocaleString("pt-BR"), lbl: "Volume", bg: "#dbeafe", color: "#2563eb" },
-              { icon: <CheckCircle size={20} />, val: `${taxaEntrega}%`, lbl: "Entregues", bg: "#d1fae5", color: "#059669" },
-              { icon: <Users size={20} />, val: clientesSet.size, lbl: "Clientes", bg: "#fef3c7", color: "#d97706" },
+              { icon: <Package size={18} aria-hidden="true" />, val: totalPedidos, lbl: "Pedidos", bg: "#ede9fe", color: "#4f46e5" },
+              { icon: <Truck size={18} aria-hidden="true" />, val: totalVolume.toLocaleString("pt-BR"), lbl: "Volume", bg: "#dbeafe", color: "#2563eb" },
+              { icon: <CheckCircle size={18} aria-hidden="true" />, val: `${taxaEntrega}%`, lbl: "Entregues", bg: "#d1fae5", color: "#059669" },
+              { icon: <Users size={18} aria-hidden="true" />, val: clientesSet.size, lbl: "Clientes", bg: "#fef3c7", color: "#d97706" },
             ].map(({ icon, val, lbl, bg, color }) => (
-              <div key={lbl} className="p-5 flex items-center gap-4">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
+              <div key={lbl} className="p-4 md:p-5 flex items-center gap-3">
+                <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
                   <span style={{ color }}>{icon}</span>
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold" style={{ color }}>{val}</p>
-                  <p className="text-sm text-gray-500">{lbl}</p>
+                  <p className="text-xl md:text-2xl font-semibold" style={{ color }}>{val}</p>
+                  <p className="text-xs text-gray-500">{lbl}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Donut + Produtos */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Donut + Produtos — empilhados no mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-1">Pedidos por status</h3>
+          <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-1 text-sm md:text-base">Pedidos por status</h3>
             <p className="text-xs text-gray-400 mb-4">Visão percentual dos pedidos</p>
             {pieData.length === 0 ? (
               <p className="text-sm text-gray-400 text-center py-8">Nenhum dado disponível</p>
             ) : (
-              <div className="flex items-center gap-6">
-                <div className="relative flex-shrink-0" style={{ width: 160, height: 160 }}>
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="relative flex-shrink-0" style={{ width: 140, height: 140 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={75}
-                        paddingAngle={3}
-                        dataKey="value"
-                        startAngle={90}
-                        endAngle={-270}
-                      >
+                      <Pie data={pieData} cx="50%" cy="50%" innerRadius={45} outerRadius={65} paddingAngle={3} dataKey="value" startAngle={90} endAngle={-270}>
                         {pieData.map((entry, i) => (
                           <Cell key={i} fill={statusColors[entry.name] ?? "#6366f1"} />
                         ))}
                       </Pie>
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e5e5", borderRadius: "12px", fontSize: 12 }}
-                        formatter={(value, name) => [`${value} pedidos`, name]}
-                      />
+                      <Tooltip contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e5e5", borderRadius: "12px", fontSize: 12 }} formatter={(value, name) => [`${value} pedidos`, name]} />
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-2xl font-bold text-gray-900">{totalPedidos}</span>
+                    <span className="text-xl font-bold text-gray-900">{totalPedidos}</span>
                     <span className="text-xs text-gray-400">pedidos</span>
                   </div>
                 </div>
-                <div className="flex flex-col gap-3 flex-1">
+                <div className="flex flex-col gap-2 flex-1">
                   {pieData.map((entry) => {
                     const pct = Math.round((entry.value / totalPedidos) * 100);
                     const color = statusColors[entry.name] ?? "#6366f1";
                     return (
                       <div key={entry.name} className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-                        <span className="text-sm text-gray-600 flex-1">{entry.name}</span>
-                        <span className="text-sm font-semibold text-gray-800">{entry.value}</span>
-                        <span className="text-xs text-gray-400 w-10 text-right">{pct}%</span>
+                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                        <span className="text-xs text-gray-600 flex-1 truncate">{entry.name}</span>
+                        <span className="text-xs font-semibold text-gray-800">{entry.value}</span>
+                        <span className="text-xs text-gray-400 w-8 text-right">{pct}%</span>
                       </div>
                     );
                   })}
@@ -300,43 +286,43 @@ export default function Relatorios() {
             )}
           </div>
 
-          <div className="rounded-2xl p-6" style={{ background: "#eff6ff", border: "0.5px solid #bfdbfe" }}>
+          <div className="rounded-2xl p-4 md:p-6" style={{ background: "#eff6ff", border: "0.5px solid #bfdbfe" }}>
             <div className="flex items-center gap-2 mb-1">
-              <ShoppingBag size={14} color="#3b82f6" />
-              <h3 className="font-semibold" style={{ color: "#1e40af" }}>Produtos mais pedidos</h3>
+              <ShoppingBag size={14} color="#3b82f6" aria-hidden="true" />
+              <h3 className="font-semibold text-sm md:text-base" style={{ color: "#1e40af" }}>Produtos mais pedidos</h3>
             </div>
-            <p className="text-xs mb-5" style={{ color: "#3b82f6" }}>Itens com maior volume</p>
+            <p className="text-xs mb-4" style={{ color: "#3b82f6" }}>Itens com maior volume</p>
             {rankingProdutos.length === 0 ? (
               <p className="text-sm" style={{ color: "#3b82f6" }}>Nenhum dado ainda</p>
             ) : rankingProdutos.map(([produto, volume], i) => (
-              <div key={produto} className="flex items-center gap-3 mb-4">
-                <div className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-semibold flex-shrink-0" style={{ background: rankBg[i], color: rankColors[i] }}>{i + 1}</div>
+              <div key={produto} className="flex items-center gap-2 md:gap-3 mb-3">
+                <div className="w-5 h-5 md:w-6 md:h-6 rounded-lg flex items-center justify-center text-xs font-semibold flex-shrink-0" style={{ background: rankBg[i], color: rankColors[i] }}>{i + 1}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate" style={{ color: "#1e40af" }}>{produto}</p>
+                  <p className="text-xs font-medium truncate" style={{ color: "#1e40af" }}>{produto}</p>
                   <p className="text-xs" style={{ color: "#3b82f6" }}>{volume.toLocaleString("pt-BR")} un</p>
                 </div>
-                <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(59,130,246,.15)" }}>
+                <div className="w-12 md:w-16 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(59,130,246,.15)" }}>
                   <div className="h-full rounded-full" style={{ width: `${Math.round((volume / maxVolume) * 100)}%`, background: "#3b82f6" }} />
                 </div>
-                <span className="text-sm font-semibold w-10 text-right" style={{ color: "#1d4ed8" }}>{volume}</span>
+                <span className="text-xs font-semibold" style={{ color: "#1d4ed8" }}>{volume}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Ranking + Alertas */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Ranking + Alertas — empilhados no mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <div className="bg-white border border-gray-100 border-l-4 rounded-r-2xl p-5 shadow-sm" style={{ borderLeftColor: "#4f46e5" }}>
-            <h3 className="font-semibold text-gray-900 mb-1">Ranking de clientes</h3>
+          <div className="bg-white border border-gray-100 border-l-4 rounded-r-2xl p-4 md:p-5 shadow-sm" style={{ borderLeftColor: "#4f46e5" }}>
+            <h3 className="font-semibold text-gray-900 mb-1 text-sm md:text-base">Ranking de clientes</h3>
             <p className="text-xs text-gray-400 mb-3">Clientes com mais pedidos</p>
             {rankingClientes.length === 0 ? (
               <p className="text-sm text-gray-400">Nenhum dado ainda</p>
             ) : rankingClientes.map(([cliente, total], i) => (
-              <div key={cliente} className="flex items-center gap-3 mb-2">
+              <div key={cliente} className="flex items-center gap-2 md:gap-3 mb-2">
                 <span className="text-xs font-semibold text-gray-400 w-4">{i + 1}</span>
-                <span className="text-sm text-gray-700 flex-1 truncate">{cliente}</span>
-                <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <span className="text-xs text-gray-700 flex-1 truncate">{cliente}</span>
+                <div className="w-16 md:w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div className="h-full rounded-full bg-indigo-500" style={{ width: `${Math.round((total / maxCliente) * 100)}%` }} />
                 </div>
                 <span className="text-xs text-gray-500 w-5 text-right">{total}</span>
@@ -344,22 +330,22 @@ export default function Relatorios() {
             ))}
           </div>
 
-          <div className="rounded-2xl p-5" style={{ background: "#fffbeb", border: "0.5px solid #fde68a" }}>
-            <h3 className="font-semibold flex items-center gap-2 mb-1" style={{ color: "#92400e" }}>
-              <AlertCircle size={14} color="#d97706" />
+          <div className="rounded-2xl p-4 md:p-5" style={{ background: "#fffbeb", border: "0.5px solid #fde68a" }}>
+            <h3 className="font-semibold flex items-center gap-2 mb-1 text-sm md:text-base" style={{ color: "#92400e" }}>
+              <AlertCircle size={14} color="#d97706" aria-hidden="true" />
               Alertas
             </h3>
             <p className="text-xs mb-3" style={{ color: "#d97706" }}>Clientes sem pedido entregue</p>
             {clientesInativos.length === 0 ? (
               <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-2 rounded-xl">
-                <CheckCircle size={14} />
+                <CheckCircle size={14} aria-hidden="true" />
                 <span className="text-sm">Tudo em dia!</span>
               </div>
             ) : clientesInativos.map((cliente, i) => (
               <div key={cliente} className="flex items-center gap-2 py-2" style={{ borderBottom: i < clientesInativos.length - 1 ? "0.5px solid #fde68a" : "none" }}>
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
-                <span className="text-sm flex-1" style={{ color: "#92400e" }}>{cliente}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#fef3c7", color: "#d97706" }}>sem entrega</span>
+                <span className="text-xs flex-1 truncate" style={{ color: "#92400e" }}>{cliente}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: "#fef3c7", color: "#d97706" }}>sem entrega</span>
               </div>
             ))}
           </div>
