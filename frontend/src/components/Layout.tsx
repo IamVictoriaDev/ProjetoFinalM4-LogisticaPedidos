@@ -5,7 +5,6 @@ import {
   Package,
   KanbanSquare,
   FileBarChart,
-  Search,
   User,
   Menu,
   X,
@@ -116,18 +115,7 @@ export default function Layout() {
               {menuAberto ? <X size={20} className="text-neutral-600" /> : <Menu size={20} className="text-neutral-600" />}
             </button>
 
-            {/* Busca */}
-            <div className="flex items-center flex-1 max-w-xl">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} aria-hidden="true" />
-                <input
-                  type="search"
-                  placeholder="Buscar pedidos, clientes..."
-                  aria-label="Buscar pedidos e clientes"
-                  className="w-full pl-10 pr-4 py-2.5 border border-neutral-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brandPurple-500 focus:border-transparent shadow-sm transition-all text-sm"
-                />
-              </div>
-            </div>
+            <div className="flex-1" />
 
             {/* Avatar */}
             <div
