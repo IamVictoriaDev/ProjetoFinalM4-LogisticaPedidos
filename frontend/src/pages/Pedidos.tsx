@@ -17,6 +17,88 @@ function StatusBadge({ status }: { status: Order["status"] }) {
   );
 }
 
+// Modal FORA do componente Pedidos para evitar perda de foco
+function PedidoModal({
+  titulo,
+  onClose,
+  onSalvar,
+  form,
+  setForm,
+  isPending,
+  isError,
+}: {
+  titulo: string;
+  onClose: () => void;
+  onSalvar: () => void;
+  form: NovoPedidoForm;
+  setForm: (v: NovoPedidoForm) => void;
+  isPending: boolean;
+  isError: boolean;
+}) {
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm p-4">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 md:p-10 relative max-h-[90vh] overflow-y-auto">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition" aria-label="Fechar modal">
+          <X size={22} />
+        </button>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">{titulo}</h2>
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="text-sm text-gray-600 font-medium block mb-1.5">Nome do Cliente</label>
+            <input
+              value={form.cliente}
+              onChange={(e) => setForm({ ...form, cliente: e.target.value })}
+              type="text"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-gray-600 font-medium block mb-1.5">Produto</label>
+            <input
+              value={form.produto}
+              onChange={(e) => setForm({ ...form, produto: e.target.value })}
+              type="text"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-gray-600 font-medium block mb-1.5">Quantidade</label>
+            <input
+              value={form.quantidade}
+              onChange={(e) => setForm({ ...form, quantidade: Number(e.target.value) })}
+              type="number"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-gray-600 font-medium block mb-1.5">Status</label>
+            <select
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value as Order["status"] })}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 bg-white text-sm"
+            >
+              <option value="Recebido">Recebido</option>
+              <option value="Em separação">Em separação</option>
+              <option value="Em transporte">Em transporte</option>
+              <option value="Entregue">Entregue</option>
+            </select>
+          </div>
+          <div className="flex gap-3 mt-2">
+            <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition text-sm">
+              Cancelar
+            </button>
+            <button onClick={onSalvar} disabled={isPending}
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:opacity-90 transition disabled:opacity-50 text-sm">
+              {isPending ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
+          {isError && <p className="text-red-500 text-sm">Erro ao salvar pedido.</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Pedidos() {
   const [busca, setBusca] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
@@ -87,60 +169,8 @@ export default function Pedidos() {
     deleteMutation.mutate(pedido.id);
   };
 
-  const Modal = ({ titulo, onClose, onSalvar, form: f, setForm: sf, isPending, isError }: {
-    titulo: string; onClose: () => void; onSalvar: () => void;
-    form: NovoPedidoForm; setForm: (v: NovoPedidoForm) => void;
-    isPending: boolean; isError: boolean;
-  }) => (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6 md:p-10 relative max-h-[90vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition" aria-label="Fechar modal">
-          <X size={22} />
-        </button>
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">{titulo}</h2>
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className="text-sm text-gray-600 font-medium block mb-1.5">Nome do Cliente</label>
-            <input value={f.cliente} onChange={(e) => sf({ ...f, cliente: e.target.value })} type="text"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 text-sm" />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600 font-medium block mb-1.5">Produto</label>
-            <input value={f.produto} onChange={(e) => sf({ ...f, produto: e.target.value })} type="text"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 text-sm" />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600 font-medium block mb-1.5">Quantidade</label>
-            <input value={f.quantidade} onChange={(e) => sf({ ...f, quantidade: Number(e.target.value) })} type="number"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 text-sm" />
-          </div>
-          <div>
-            <label className="text-sm text-gray-600 font-medium block mb-1.5">Status</label>
-            <select value={f.status} onChange={(e) => sf({ ...f, status: e.target.value as Order["status"] })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 bg-white text-sm">
-              <option value="Recebido">Recebido</option>
-              <option value="Em separação">Em separação</option>
-              <option value="Em transporte">Em transporte</option>
-              <option value="Entregue">Entregue</option>
-            </select>
-          </div>
-          <div className="flex gap-3 mt-2">
-            <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition text-sm">Cancelar</button>
-            <button onClick={onSalvar} disabled={isPending}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:opacity-90 transition disabled:opacity-50 text-sm">
-              {isPending ? "Salvando..." : "Salvar"}
-            </button>
-          </div>
-          {isError && <p className="text-red-500 text-sm">Erro ao salvar pedido.</p>}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="w-full p-4 md:p-8 bg-gray-50 min-h-screen">
-
-      {/* Header da página */}
       <div className="flex items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-xl md:text-3xl font-bold text-gray-900">Pedidos</h1>
@@ -154,7 +184,6 @@ export default function Pedidos() {
         </button>
       </div>
 
-      {/* Barra de busca */}
       <div className="mb-4">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} aria-hidden="true" />
@@ -174,7 +203,6 @@ export default function Pedidos() {
         )}
       </div>
 
-      {/* Tabela */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-gray-500 text-sm">Carregando pedidos...</div>
@@ -234,13 +262,27 @@ export default function Pedidos() {
       </div>
 
       {modalAberto && (
-        <Modal titulo="Novo Pedido" onClose={() => setModalAberto(false)} onSalvar={handleCriarPedido}
-          form={form} setForm={setForm} isPending={createMutation.isPending} isError={createMutation.isError} />
+        <PedidoModal
+          titulo="Novo Pedido"
+          onClose={() => setModalAberto(false)}
+          onSalvar={handleCriarPedido}
+          form={form}
+          setForm={setForm}
+          isPending={createMutation.isPending}
+          isError={createMutation.isError}
+        />
       )}
+
       {modalEdicaoAberto && pedidoEditando && (
-        <Modal titulo="Editar Pedido" onClose={() => { setModalEdicaoAberto(false); setPedidoEditando(null); }}
-          onSalvar={handleSalvarEdicao} form={formEdicao} setForm={setFormEdicao}
-          isPending={updateMutation.isPending} isError={updateMutation.isError} />
+        <PedidoModal
+          titulo="Editar Pedido"
+          onClose={() => { setModalEdicaoAberto(false); setPedidoEditando(null); }}
+          onSalvar={handleSalvarEdicao}
+          form={formEdicao}
+          setForm={setFormEdicao}
+          isPending={updateMutation.isPending}
+          isError={updateMutation.isError}
+        />
       )}
     </div>
   );
