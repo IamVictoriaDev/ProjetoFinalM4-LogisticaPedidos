@@ -80,9 +80,16 @@ export function useUpdateOrderStatus() {
     { previous?: Order[] }
   >({
     mutationFn: async ({ id, status }) => {
-      const { data } = await api.patch(`/orders/${id}`, { status });
-      return data;
-    },
+  const orders = qc.getQueryData<Order[]>(["orders"]);
+  const pedido = orders?.find((o) => o.id === id);
+  const { data } = await api.patch(`/orders/${id}`, {
+    cliente: pedido?.cliente ?? "",
+    produto: pedido?.produto ?? "",
+    quantidade: pedido?.quantidade ?? 0,
+    status,
+  });
+  return data;
+},
     onMutate: async ({ id, status }) => {
       await qc.cancelQueries({ queryKey: ["orders"] });
       const previous = qc.getQueryData<Order[]>(["orders"]);
