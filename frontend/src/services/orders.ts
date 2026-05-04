@@ -15,7 +15,7 @@ export function useOrders() {
   return useQuery({
     queryKey: ["orders"],
     queryFn: fetchOrders,
-    staleTime: 1000 * 30,
+    staleTime: 0,
   });
 }
 

@@ -16,10 +16,10 @@ export default function Dashboard() {
 
   const hoje = new Date().toISOString().split("T")[0];
 
-  const pedidosHoje   = useMemo(() => orders.filter((p) => p.data === hoje).length, [orders, hoje]);
+  const pedidosHoje   = useMemo(() => orders.filter((p) => p.data?.startsWith(hoje)).length, [orders, hoje]);
   const aguardando    = useMemo(() => orders.filter((p) => p.status === "Recebido").length, [orders]);
   const emTransporte  = useMemo(() => orders.filter((p) => p.status === "Em transporte").length, [orders]);
-  const entreguesHoje = useMemo(() => orders.filter((p) => p.status === "Entregue" && p.data === hoje).length, [orders, hoje]);
+  const entreguesHoje = useMemo(() => orders.filter((p) => p.status === "Entregue" && p.data?.startsWith(hoje)).length, [orders, hoje]);
 
   const evolucaoPedidos = useMemo(() => {
     const map: Record<string, number> = {};
