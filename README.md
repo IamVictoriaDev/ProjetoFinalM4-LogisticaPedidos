@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+# LOGIX — Inteligência que move pedidos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema web fullstack de gestão de pedidos para distribuidoras e atacados.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 💡 O Problema
 
-## React Compiler
+Pequenos negócios de distribuição gerenciam pedidos de forma manual — pelo WhatsApp, caderno ou memória. Isso gera perda de informação, falta de visibilidade do fluxo operacional e dificuldade em acompanhar o status de cada entrega.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✅ A Solução
 
-## Expanding the ESLint configuration
+O LOGIX é um sistema que permite criar, acompanhar e analisar pedidos do início à entrega, com visualização Kanban, dashboard em tempo real e relatórios analíticos.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Deploy
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Serviço | URL |
+|---|---|
+| Frontend (Vercel) | https://projeto-final-m4-logistica-pedidos.vercel.app |
+| Backend (Railway) | https://projetofinalm4-logisticapedidos-production.up.railway.app |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🛠️ Tecnologias
+
+### Frontend
+- React + TypeScript
+- TailwindCSS
+- TanStack Query
+- Zustand
+- dnd-kit
+- recharts
+- Vite
+
+### Backend
+- Node.js + Fastify
+- Prisma ORM
+- PostgreSQL
+- TypeScript
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+ProjetoFinalM4-LogisticaPedidos/
+├── frontend/
+│   └── src/
+│       ├── components/    # Layout, Kanban, ErrorBoundary
+│       ├── pages/         # Dashboard, Pedidos, Kanban, Relatórios
+│       ├── services/      # api.ts, orders.ts
+│       ├── types/         # order.ts
+│       └── store/         # useToast.ts
+└── backend/
+    └── src/
+        ├── controllers/   # OrderController.ts
+        ├── services/      # OrderService.ts
+        ├── routers/       # route.ts
+        └── lib/           # prisma.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Como rodar localmente
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Pré-requisitos
+- Node.js 18+
+- PostgreSQL
+
+### Backend
+
+```bash
+cd backend
+npm install
+npx prisma generate
+npx prisma migrate deploy
+npm run dev
 ```
+
+Crie um arquivo `.env` em `backend/`:
+```
+DATABASE_URL="postgresql://usuario:senha@host:porta/banco"
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Crie um arquivo `.env` em `frontend/`:
+```
+VITE_API_URL=http://localhost:3333
+```
+
+Acesse: `http://localhost:5173`
+
+---
+
+## 📋 Funcionalidades
+
+- **Dashboard** — KPIs em tempo real, gráfico de pedidos, ações pendentes
+- **Pedidos** — CRUD completo com busca por cliente, produto ou ID
+- **Kanban** — drag and drop com atualização automática de status e busca
+- **Relatórios** — gráfico donut, ranking de produtos e clientes, alertas, upload de JSON/CSV e exportar CSV
+
+---
+
+## 👥 Time
+
+Victoria · Marcelo · Cauã · Evely · Geiza · Maxine
